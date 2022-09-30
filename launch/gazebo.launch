@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+  <arg name="map_file" default="$(find bicycle_description)/map/square_world.yaml"/>
+  <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
+
+  <arg name="world" default="$(find bicycle_description)/world/square_world.world"/>
+  <!-- Launch Gazebo -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+    <arg name="world_name" value="$(arg world)" />
+  </include>
+
+  <group ns="/bike">
+
+    <!-- Robot Model -->
+    <param name="robot_description" command="$(find xacro)/xacro $(find bicycle_description)/urdf/bicycle.xacro"/>
+    <arg name="x" default="0"/>
+    <arg name="y" default="0"/>
+    <arg name="z" default="0.6"/>
+
+    <!-- Spawn Robot Model -->
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" output="screen" args="-param robot_description -urdf -model bicycle 
+                -x $(arg x) -y $(arg y) -z $(arg z)" ns="/bike"/>        
+    
+    <!-- Load Controllers -->
+    <rosparam file="$(find bicycle_description)/config/controller.yaml" command="load"/>
+
+    <!-- Controllers -->
+    <node name="controller_spawner" pkg="controller_manager" type="spawner"
+      respawn="false" output="screen" ns="/bike"
+      args="--namespace=/bike
+      joint_state_controller
+      front_fork_controller  
+      back_wheel_controller
+      --timeout 60">
+    </node>    
+    
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+      <remap from="/joint_states" to="/bicycle/joint_states"/>
+    </node>
+    
+  </group>
+
+</launch>

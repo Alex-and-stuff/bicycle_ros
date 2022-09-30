@@ -1,0 +1,131 @@
+<?xml version="1.0" ?>
+<robot name="bicycle" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find bicycle_description)/urdf/materials.xacro" />
+  <xacro:include filename="$(find bicycle_description)/urdf/bicycle.trans" />
+  <xacro:include filename="$(find bicycle_description)/urdf/bicycle.gazebo" />
+  <xacro:include filename="$(find bicycle_description)/urdf/sensors.xacro" />
+  <xacro:include filename="$(find bicycle_description)/urdf/sensors.gazebo" />
+
+  <link name="base_link">
+    <!--<inertial>
+      <origin xyz="0.1 0.1 0.1" rpy="0 0 0"/>
+      <mass value="0.0"/>
+      <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+    </inertial>-->
+  </link>
+
+  <joint name="base" type="fixed">
+    <origin xyz="0.84811 0.0 0.267533" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="frame"/>
+  </joint>
+
+  <link name="back_wheel_1">
+    <inertial>
+      <origin xyz="-4.665051260843711e-07 0.07999999999999871 -9.474190248992542e-08" rpy="0 0 0"/>
+      <mass value="7.17827052953697"/>
+      <inertia ixx="0.226393" iyy="0.449891" izz="0.226393" ixy="-0.0" iyz="0.0" ixz="0.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="0.84811 0.08 0.267533" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://bicycle_description/meshes/back_wheel_1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+    <collision>
+      <origin xyz="0.84811 0.08 0.267533" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://bicycle_description/meshes/back_wheel_1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="frame">
+    <inertial>
+      <origin xyz="-0.4180874824874772 -1.8521219476316816e-08 0.004402431246678269" rpy="0 0 0"/>
+      <mass value="3.4649372633286384"/>
+      <inertia ixx="0.126115" iyy="0.297787" izz="0.179524" ixy="0.0" iyz="-0.0" ixz="-0.045126"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://bicycle_description/meshes/frame.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://bicycle_description/meshes/frame.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="front_wheel_1">
+    <inertial>
+      <origin xyz="-3.1036681114038345e-08 0.08399999999999737 -9.474189649472109e-08" rpy="0 0 0"/>
+      <mass value="4.70339303585743"/>
+      <inertia ixx="0.206376" iyy="0.410961" izz="0.206376" ixy="-0.0" iyz="0.0" ixz="-0.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0.175163 0.084 0.267533" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://bicycle_description/meshes/front_wheel_1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.175163 0.084 0.267533" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://bicycle_description/meshes/front_wheel_1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="front_fork_1">
+    <inertial>
+      <origin xyz="0.09904830883535634 -6.450152857772817e-14 -0.20717436570824999" rpy="0 0 0"/>
+      <mass value="1.30177606552459"/>
+      <inertia ixx="0.053195" iyy="0.047325" izz="0.015452" ixy="-0.0" iyz="-0.0" ixz="0.012899"/>
+    </inertial>
+    <visual>
+      <origin xyz="0.061665 0.0 -0.286333" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://bicycle_description/meshes/front_fork_1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+    <collision>
+      <origin xyz="0.061665 0.0 -0.286333" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://bicycle_description/meshes/front_fork_1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint name="Rev2" type="continuous">
+    <origin xyz="-0.061665 0.0 0.286333" rpy="0 0 0"/>
+    <parent link="frame"/>
+    <child link="front_fork_1"/>
+    <axis xyz="0.34202 0.0 -0.939693"/>
+  </joint>  
+  
+  <joint name="Rev1" type="continuous">
+    <origin xyz="0.236828 -0.084 -0.553866" rpy="0 0 0"/>
+    <parent link="front_fork_1"/>
+    <child link="front_wheel_1"/>
+    <dynamics damping="0.0" friction="0.0"/>
+    <axis xyz="0.0 -1.0 0.0"/>
+  </joint>
+
+  <joint name="Rev3" type="continuous">
+    <origin xyz="-0.84811 -0.08 -0.267533" rpy="0 0 0"/>
+    <parent link="frame"/>
+    <child link="back_wheel_1"/>
+    <axis xyz="-0.0 1.0 0.0"/>
+  </joint>
+
+</robot>
